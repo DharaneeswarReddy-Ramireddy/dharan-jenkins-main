@@ -22,12 +22,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Build Project
+      - name: Start Application
         run: |
-          nohup python app.py &  # Run app.py in detached mode
-          echo "Building the project"
+          nohup python app.py &
 
-      - name: Get Runner IP Address
+      - name: Install ngrok
         run: |
-          echo "Public IP Address of Runner:"
-          curl ifconfig.me
+          curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+          echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list >/dev/null
+          sudo apt update && sudo apt install ngrok
+
+      - name: Start ngrok
+        run: |
+          nohup ngrok http 5000 &  # Replace 8000 with your app's port
+        env:
+          NGROK_AUTHTOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+
+      - name: Display ngrok Public URL
+        run: |
+          curl http://localhost:4040/api/tunnels | jq '.tunnels[0].public_url'
