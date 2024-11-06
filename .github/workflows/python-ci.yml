@@ -24,5 +24,10 @@ jobs:
       
       - name: Build Project
         run: |
-          # Add build commands here
+          python app.py
           echo "Building the project"
+
+      - name: Get Runner IP Address
+        run: |
+          echo "Public IP Address of Runner:"
+          curl ifconfig.me
