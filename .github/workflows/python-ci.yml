@@ -24,7 +24,7 @@ jobs:
       
       - name: Build Project
         run: |
-          python app.py
+          nohup python app.py &  # Run app.py in detached mode
           echo "Building the project"
 
       - name: Get Runner IP Address
